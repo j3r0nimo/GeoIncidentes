@@ -1,0 +1,9 @@
+
+.kpi-card {
+  border: 1px solid rgba(193, 18, 31, 0.25) !important;
+}
+
+.kpi-value {
+  color: #c1121f;
+  letter-spacing: -0.5px;
+}
