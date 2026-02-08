@@ -1,0 +1,45 @@
+{
+  "name": "backend_grupo_14",
+  "version": "1.0.0",
+  "description": "Backend Grupo 14",
+  "main": "src/app.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/server.js",
+    "start:prod": "cross-env NODE_ENV=production node src/server.js",
+    "dev": "nodemon src/server.js",
+    "seed:users": "node src/scripts/seedusers.js",
+    "seed:csv": "node src/scripts/importarCSV.js",
+    "seed:all": "npm run seed:users && npm run seed:csv",
+    "test": "cross-env NODE_ENV=test NODE_OPTIONS=--experimental-vm-modules jest --runInBand",
+    "test:unit": "npm test -- tests/services tests/controllers",
+    "test:integration": "cross-env NODE_ENV=test NODE_OPTIONS=--experimental-vm-modules jest --runInBand tests/integration"
+  },
+  "author": "Grupo 14",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "chalk": "^5.6.2",
+    "cors": "^2.8.5",
+    "csv-parser": "^3.2.0",
+    "dotenv": "^17.2.2",
+    "exceljs": "^4.4.0",
+    "express": "^5.1.0",
+    "express-mongo-sanitize": "^2.2.0",
+    "express-rate-limit": "^8.2.1",
+    "helmet": "^8.1.0",
+    "http-errors": "^2.0.0",
+    "jsonwebtoken": "^9.0.3",
+    "mongoose": "^8.18.1",
+    "multer": "^2.0.2",
+    "pdfkit": "^0.17.2",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1"
+  },
+  "devDependencies": {
+    "cross-env": "^10.1.0",
+    "jest": "^30.2.0",
+    "nodemon": "^3.1.10",
+    "supertest": "^7.2.2"
+  }
+}
