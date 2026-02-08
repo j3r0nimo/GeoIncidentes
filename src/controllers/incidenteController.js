@@ -407,6 +407,77 @@ export const updateIncidente = async (req, res, next) => {
     return next(createError(500, "Error al actualizar el incidente"));
   }
 };
+// RETORNAR la lista de todos los incidentes
+export const getIncidentes = async (req, res, next) => {
+  try {
+    const page = Math.max(1, parseInt(req.query.page, 10) || 1);
+    const limit = Math.max(1, parseInt(req.query.limit, 10) || 20);
+    const keyword = req.query.keyword || ""; // ej.: ?keyword=Choque
+
+    logger.info("Se llamo a getIncidentes", {
+      page,
+      limit,
+      keyword,
+    });
+
+    const { incidentes, total, pages } =
+      await incidenteServicio.getIncidentesService(page, limit, keyword);
+
+    const baseUrl = `${req.protocol}://${req.get("host")}`; // completa el enlace de las imagenes
+
+    const collectionUrl = `${baseUrl}${req.baseUrl}`; // completa el enlace de paginacion
+
+    const responseData = incidentes.map((incidente) =>
+      mapIncidenteToResponse(incidente, baseUrl),
+    );
+
+    res.status(200).json({
+      success: true,
+      data: responseData,
+      meta: {
+        total,
+        page,
+        pages,
+
+        firstPage:
+          total > 0
+            ? `${collectionUrl}?page=1&limit=${limit}&keyword=${encodeURIComponent(keyword)}`
+            : null,
+
+        // ternario para asignar valor a prevPage
+        prevPage:
+          page > 1
+            ? `${collectionUrl}?page=${
+                page - 1
+              }&limit=${limit}&keyword=${encodeURIComponent(keyword)}`
+            : null,
+
+        // ternario para asignar valor a nextPage
+        nextPage:
+          page < pages
+            ? `${collectionUrl}?page=${
+                page + 1
+              }&limit=${limit}&keyword=${encodeURIComponent(keyword)}`
+            : null,
+
+        lastPage: pages
+          ? `${collectionUrl}?page=${pages}&limit=${limit}&keyword=${encodeURIComponent(keyword)}`
+          : null,
+
+        hasPrev: page > 1, // bool. Asi el front sabe si usar el boton "PREVIO"
+
+        hasNext: page < pages, // bool. Asi el front sabe si usar el boton "NEXT"
+      },
+    });
+  } catch (err) {
+    logger.error("getIncidentes fallo", {
+      error: err.message,
+      stack: err.stack,
+    });
+
+    return next(createError(500, "Error al obtener el listado de incidentes"));
+  }
+};
 
 /*
  * version final
