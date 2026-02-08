@@ -161,3 +161,262 @@ export const getMapaClusterData = async (req, res, next) => {
     return next(createError(500, "Error al obtener datos para mapa cluster"));
   }
 };
+
+// *************************************************************************************************
+// CREAR un NUEVO incidente
+export const newIncidente = async (req, res, next) => {
+  logger.info("Se llamo a newIncidente", {
+    hasImage: Boolean(req.file),
+  });
+
+  try {
+    const data = { ...req.body };
+
+    if (req.file) {
+      data.imagen = req.file.filename;
+
+      logger.info("El nuevo incidente tiene una imagen.", {
+        filename: req.file.filename,
+      });
+    }
+
+    const incidenteNuevo = await incidenteServicio.newIncidenteService(data);
+
+    logger.info("Incidente creado con exito.", {
+      id: incidenteNuevo._id,
+      tipo: incidenteNuevo.incidente,
+    });
+
+    const baseUrl = `${req.protocol}://${req.get("host")}`;
+
+    const incidenteResponse = mapIncidenteToResponse(
+      incidenteNuevo.toObject(),
+      baseUrl,
+    );
+
+    res.status(201).json(incidenteResponse);
+  } catch (error) {
+    // si hubo error, NO queremos guardar el archivo de imagen
+    if (req.file) {
+      try {
+        await fs.unlink(req.file.path);
+        logger.warn(
+          "No se guarda la imagen por no haberse podido crear el incidente",
+          {
+            filename: req.file.filename,
+          },
+        );
+      } catch (unlinkError) {
+        logger.error(
+          "No se pudo eliminar la imagen subida, despues del error",
+          {
+            filename: req.file.filename,
+            error: unlinkError.message,
+          },
+        );
+      }
+    }
+
+    if (error.name === "ValidationError") {
+      logger.warn(
+        "Error de validacion mientras se creaba un nuevo incidente.",
+        {
+          message: error.message,
+        },
+      );
+
+      return next(createError(400, error.message));
+    }
+    logger.error("Error inesperado en newIncidente", {
+      error: error.message,
+      stack: error.stack,
+    });
+
+    return next(createError(500, "Error al crear el incidente"));
+  }
+};
+
+// *************************************************************************************************
+// ELIMINAR un incidente
+export const deleteIncidente = async (req, res, next) => {
+  const { id } = req.params;
+
+  logger.info("Se llamo a deleteIncidente", { id });
+
+  try {
+    const incidenteEliminado =
+      await incidenteServicio.deleteIncidenteService(id);
+
+    if (!incidenteEliminado) {
+      logger.warn("deleteIncidente: not found. Incidente no localizado.", {
+        id,
+      });
+
+      return next(
+        createError(
+          404,
+          "No se pudo eliminar este incidente porque no se encontro el id recibido",
+        ),
+      );
+    }
+
+    if (incidenteEliminado.imagen) {
+      const imagePath = path.resolve("uploads/img", incidenteEliminado.imagen);
+
+      try {
+        await fs.unlink(imagePath);
+      } catch (err) {
+        logger.warn("deleteIncidente: No se pudo borrar la imagen.", {
+          id,
+          image: incidenteEliminado.imagen,
+          error: err.message,
+        });
+      }
+    }
+
+    logger.info("deleteIncidente: Se elimino el incidente.", {
+      id: incidenteEliminado._id,
+      hadImage: Boolean(incidenteEliminado.imagen),
+    });
+
+    res.status(200).json({
+      mensaje: "Incidente correctamente eliminado.",
+      id: incidenteEliminado._id,
+      tipo: incidenteEliminado.incidente,
+      medio: incidenteEliminado.medio,
+      vehiculo: incidenteEliminado.vehiculo,
+      patente: incidenteEliminado.patente,
+    });
+  } catch (error) {
+    logger.error("deleteIncidente fallo.", {
+      id,
+      error: error.message,
+      stack: error.stack,
+    });
+
+    return next(createError(500, `Error al eliminar el incidente.`));
+  }
+};
+
+// *************************************************************************************************
+// ACTUALIZAR un incidente
+export const updateIncidente = async (req, res, next) => {
+  const { id } = req.params;
+  const baseUrl = `${req.protocol}://${req.get("host")}`;
+
+  let nuevaImagen = null;
+  let imagenAnterior = null;
+
+  logger.info("Se llamo a updateIncidente", {
+    id,
+    hasFile: Boolean(req.file),
+  });
+
+  try {
+    const data = { ...req.body };
+
+    // 1 si se añade una imagen, la incluimos en el update
+    if (req.file) {
+      nuevaImagen = req.file.filename;
+      data.imagen = nuevaImagen;
+
+      logger.info("updateIncidente: Se agrega una nueva imagen.", {
+        id,
+        nuevaImagen,
+      });
+    }
+
+    // 2 primero: tomamos el incidente (para saber el nombre de la imagen anterior)
+    const incidenteExistente =
+      await incidenteServicio.getIncidenteDocumentByIdService(id);
+
+    if (!incidenteExistente) {
+      logger.warn(
+        "updateIncidente: incident not found. No se encontro el incidente.",
+        { id },
+      );
+
+      if (nuevaImagen) {
+        await fs
+          .unlink(path.resolve("uploads/img", nuevaImagen))
+          .catch(() => { });
+      }
+
+      return next(createError(404, "Incidente no encontrado"));
+    }
+
+    imagenAnterior = incidenteExistente.imagen;
+
+    // 3 actualizar la base de datos
+    const incidenteActualizado = await incidenteServicio.updateIncidenteService(
+      id,
+      data,
+    );
+
+    // 4 borrar la imagen anterior (solo si la cambiamos)
+    if (nuevaImagen && imagenAnterior) {
+      const oldImagePath = path.resolve("uploads/img", imagenAnterior);
+
+      try {
+        await fs.unlink(oldImagePath);
+      } catch (err) {
+        logger.warn("updateIncidente: No se pudo borrar la imagen previa.", {
+          id,
+          imagenAnterior,
+          error: err.message,
+        });
+      }
+    }
+
+    // retornamos siempre la version mapped, no el raw Mongoose document
+    const incidenteResponse = mapIncidenteToResponse(
+      incidenteActualizado.toObject?.() ?? incidenteActualizado,
+      baseUrl,
+    );
+
+    logger.info("updateIncidente. El incidente se actualizo correctamente.", {
+      id,
+      imageReplaced: Boolean(nuevaImagen),
+    });
+
+    res.status(200).json({
+      mensaje: "Incidente actualizado correctamente",
+      incidente: incidenteResponse,
+    });
+  } catch (error) {
+    // 5 revertir la nueva imagen si el update falla
+    if (nuevaImagen) {
+      await fs.unlink(path.resolve("uploads/img", nuevaImagen)).catch(() => { });
+    }
+
+    if (error.name === "ValidationError") {
+      logger.warn("updateIncidente. Error de validacion.", {
+        id,
+        error: error.message,
+      });
+      return next(
+        createError(400, "Datos invalidos para actualizar el incidente"),
+      );
+    }
+
+    logger.error("updateIncidente fallo.", {
+      id,
+      error: error.message,
+    });
+
+    return next(createError(500, "Error al actualizar el incidente"));
+  }
+};
+
+/*
+ * version final
+ * 23 enero 2026
+ * Production-ready en terminos de diseño, arquitectura y cumplimiento de su razón de ser
+ * HTTP
+ * status codes
+ * request/response shaping
+ * file handling
+ * Logger: catch errors and log them.
+ * Image handling
+ */
+
