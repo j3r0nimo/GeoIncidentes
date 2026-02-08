@@ -4,8 +4,8 @@
  */
 
 import app from "./app.js";
-import connectDB from "../../src/db/db.js"; // Conexión a MongoDB
-import { PORT } from "../../config/env.js"; // Puerto backend
+import connectDB from "./db/db.js"; // Conexión a MongoDB
+import { PORT } from "../config/env.js"; // Puerto backend
 
 // inicio del servidor
 (async () => {
