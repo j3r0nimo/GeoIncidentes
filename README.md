@@ -29,7 +29,12 @@ Terminal Backend:
 - cd backend: ubicarnos en la carpeta del backend.
 - npm install: instalar las dependencias de la carpeta.
 - usamos el archivo .env.template para la creacion del .env y agregamos los datos que faltan.
-- npm run seed:all: crear y poblar la base de datos.
+
+- en caso de usar la base de datos de manera local:
+  - npm run seed:all: crear y poblar la base de datos.
+- en caso de usar la base de datos de la nube:
+  - no hace falta correr npm run seed, ya que la base de datos ya esta poblada
+  
 - npm run start: correr el backend en entorno de produccion.
 
 Terminal Frontend:
