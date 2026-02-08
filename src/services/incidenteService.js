@@ -26,6 +26,23 @@ export const getIncidenteDocumentByIdService = async (id) => {
   return Incidente.findById(id);
 };
 
+// CREAR un NUEVO incidente
+export const newIncidenteService = async (data) => {
+  return new Incidente(data).save();
+};
+
+// ELIMINAR un incidente
+export const deleteIncidenteService = async (id) => {
+  return Incidente.findByIdAndDelete(id);
+};
+
+// ACTUALIZAR un incidente
+export const updateIncidenteService = async (id, data) => {
+  return Incidente.findByIdAndUpdate(id, data, {
+    new: true,
+    runValidators: true,
+  });
+};
 /*
  * version final
  * 19 enero 2026
