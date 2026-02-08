@@ -19,6 +19,11 @@ Blanca
 
 Tener en cuenta que las variables de entorno API_KEY del backend y VITE_API_KEY del frontend deben tener IDENTICO contenido. Hay un valor pasado por e-mail.
 
+INSTALACION DE LA BASE DE DATOS:
+En la variable MONGO_URI= , en el .env del backend, se define si se desea instalar local o en la nube.
+En modo local REQUIERE mongoDB instalado.
+Para el modo en la nube, el valor se pasa por e-mail.
+
 Para correr el proyecto de manera local vamos a tener que abrir 2 terminales.
 Terminal Backend:
 - cd backend: ubicarnos en la carpeta del backend.
