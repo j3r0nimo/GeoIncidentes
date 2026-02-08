@@ -12,16 +12,16 @@ import mongoSanitize from "express-mongo-sanitize"; // avoids NoSQL-injection at
 import cors from "cors";
 
 // Config & DB imports
-import { FRONTEND_URL } from "../../origen/config/env.js"; // Puerto frontend
+import { FRONTEND_URL } from "../config/env.js"; // Puerto frontend
 
 // Swagger
 import swaggerUi from "swagger-ui-express";
-import swaggerSpec from "../../origen/config/swagger.js";
+import swaggerSpec from "../config/swagger.js";
 
 // Routes & Middlewares imports
-import incidentesRutas from "../../origen/src/routes/incidenteRoutes.js";
-import authRoutes from "../../origen/src/routes/authRoutes.js";
-import reportRoutes from "../../origen/src/routes/reportRoutes.js";
+import incidentesRutas from "../src/routes/incidenteRoutes.js";
+import authRoutes from "../src/routes/authRoutes.js";
+import reportRoutes from "../src/routes/reportRoutes.js";
 import { errorHandler } from "../src/middlewares/errorHandler.js";
 import { notFound } from "../src/middlewares/notFound.js";
 import { requireApiKey } from "../src/middlewares/requireApiKey.js";
