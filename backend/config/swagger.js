@@ -3,7 +3,7 @@
 import { fileURLToPath } from "url";
 import path from "path";
 import swaggerJSDoc from "swagger-jsdoc";
-import { BASE_URL } from "../config/env.js";
+import { BASE_URL } from "./env.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

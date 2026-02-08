@@ -19,12 +19,12 @@ import swaggerUi from "swagger-ui-express";
 import swaggerSpec from "../config/swagger.js";
 
 // Routes & Middlewares imports
-import incidentesRutas from "../src/routes/incidenteRoutes.js";
-import authRoutes from "../src/routes/authRoutes.js";
-import reportRoutes from "../src/routes/reportRoutes.js";
-import { errorHandler } from "../src/middlewares/errorHandler.js";
-import { notFound } from "../src/middlewares/notFound.js";
-import { requireApiKey } from "../src/middlewares/requireApiKey.js";
+import incidentesRutas from "./routes/incidenteRoutes.js";
+import authRoutes from "./routes/authRoutes.js";
+import reportRoutes from "./routes/reportRoutes.js";
+import { errorHandler } from "./middlewares/errorHandler.js";
+import { notFound } from "./middlewares/notFound.js";
+import { requireApiKey } from "./middlewares/requireApiKey.js";
 
 // para servir las imágenes
 const __filename = fileURLToPath(import.meta.url);
