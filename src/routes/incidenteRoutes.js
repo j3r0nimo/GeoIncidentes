@@ -45,6 +45,8 @@ router.put(
    uploadImage.single("imagen"),
    incidenteControlador.updateIncidente,
 );
+//listar incidentes
+router.get("/", incidenteControlador.getIncidentes);
 /* =======================
    SWAGGER GET INCIDENTES
    ======================= */

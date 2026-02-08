@@ -43,6 +43,47 @@ export const updateIncidenteService = async (id, data) => {
     runValidators: true,
   });
 };
+// RETORNAR eL listado de incidentes
+export const getIncidentesService = async (
+  page = 1,
+  limit = 20,
+  keyword = "",
+) => {
+  const skip = (page - 1) * limit; // skip(n) le dice a mongodb n° resultados a evitar (y donde empezar)
+
+  const filter = keyword
+    ? {
+        $or: [
+          { incidente: { $regex: keyword, $options: "i" } }, // busqueda en el campo incidente
+          { medio: { $regex: keyword, $options: "i" } }, // o en medio
+          { vehiculo: { $regex: keyword, $options: "i" } }, // o en vehiculo
+          { patente: { $regex: keyword, $options: "i" } }, // o en patente
+          { direccion: { $regex: keyword, $options: "i" } }, // o en direccion
+          { sector: { $regex: keyword, $options: "i" } }, // o en sector
+          { lugar: { $regex: keyword, $options: "i" } }, // o en lugar
+          { descripcion: { $regex: keyword, $options: "i" } }, // o en descripcion
+        ],
+      }
+    : {};
+
+  const [incidentes, total] = await Promise.all([
+    Incidente.find(filter)
+      .sort({ fecha: 1, hora: 1 })
+      .skip(skip)
+      .limit(limit)
+      .lean(),
+    Incidente.countDocuments(filter),
+  ]);
+
+  return {
+    incidentes,
+    total,
+    page,
+    pages: Math.ceil(total / limit),
+  };
+};
+
+
 /*
  * version final
  * 19 enero 2026
