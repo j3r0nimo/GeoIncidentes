@@ -21,6 +21,30 @@ router.get(
 router.get("/mapa/jitter", incidenteControlador.getMapaJitterData);
 router.get("/mapa/cluster", incidenteControlador.getMapaClusterData);
 
+router.post(
+   "/",
+   requireAuth,
+   requireRole("user", "admin"),
+   uploadImage.single("imagen"),
+   parsePosicion,
+   incidenteControlador.newIncidente,
+);
+router.delete(
+   "/:id",
+   requireAuth,
+   requireRole("admin"),
+   validateObjectId("id"),
+   incidenteControlador.deleteIncidente,
+);
+
+router.put(
+   "/:id",
+   requireAuth,
+   requireRole("user", "admin"),
+   validateObjectId("id"),
+   uploadImage.single("imagen"),
+   incidenteControlador.updateIncidente,
+);
 /* =======================
    SWAGGER GET INCIDENTES
    ======================= */
