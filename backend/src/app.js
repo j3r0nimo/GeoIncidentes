@@ -42,7 +42,7 @@ app.use(helmet());
 
 // enable CORS before routes
 // tells your backend to allow requests only from your React dev server
-app.use(cors({ origin: FRONTEND_URL }));
+app.use(cors({ origin: [FRONTEND_URL, "http://localhost:4173"] }));
 
 // app: para servir json content
 app.use(express.json());
