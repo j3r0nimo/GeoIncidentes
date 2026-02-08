@@ -17,7 +17,7 @@ Blanca
 
 ### Guia de arranque
 
-Tener en cuenta que en las variable de entorno API_KEY debe existir en el frontend y en el backend y tener el contenido IDENTICO.
+Tener en cuenta que las variables de entorno API_KEY del backend y VITE_API_KEY del frontend deben tener IDENTICO contenido. Hay un valor pasado por e-mail.
 
 Para correr el proyecto de manera local vamos a tener que abrir 2 terminales.
 Terminal Backend:
@@ -30,6 +30,7 @@ Terminal Backend:
 Terminal Frontend:
 - cd frontend: ubicarnos en la carpeta del frontend.
 - npm install: instalar las dependencias de la carpeta.
+- usamos el archivo .env.template para la creacion del .env y agregamos los datos que faltan.
 - npm run dev: correr el frontend en entorno de desarrollo.
 - npm run build: generar build de produccion.
 - npm run preview: previsualizar el build.
