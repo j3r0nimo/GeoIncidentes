@@ -2,7 +2,7 @@
 
 export const mapIncidenteToReportRow = (inc) => {
   return {
-    fecha: inc.fecha ? new Date(inc.fecha).toLocaleDateString("es-AR") : "",
+    fecha: inc.fecha ? new Date(inc.fecha).toLocaleDateString("es-AR", { timeZone: "UTC" }) : "",
     hora: inc.hora ?? "",
     tipo: inc.incidente ?? "",
     medio: inc.medio ?? "",
