@@ -516,7 +516,9 @@ export default function Administracion() {
                                 <tr key={inc._id} className={idEdicion === inc._id ? "table-primary" : ""}>
                                     <td>{inc.incidente}</td>
                                     <td>
-                                        {inc.fecha ? new Date(inc.fecha).toLocaleDateString('es-AR') : ""}
+                                        {inc.fecha
+                                            ? inc.fecha.substring(0, 10).split("-").reverse().join("/")
+                                            : "N/A"}
                                     </td>
                                     <td>{inc.patente}</td>
                                     <td>{inc.medio}</td>
