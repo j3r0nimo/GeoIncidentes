@@ -1,5 +1,5 @@
-import connectDB, { disconnectDB } from "../../../origen/src/db/db.js";
-import User from "../../../origen/src/models/users.js";
+import connectDB, { disconnectDB } from "../db/db.js";
+import User from "../models/users.js";
 import { hashPassword } from "../utils/password.js";
 
 const runUsuario = async () => {
