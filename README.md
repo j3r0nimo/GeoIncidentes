@@ -52,3 +52,9 @@ Proyecto Final de la Tecnicatura Universitaria de Programación en la Universida
 - Jerónimo BALTIAN ORTIZ
 - Jimena MARTINEZ ARANA
 - Carlos Alberto ARCE
+
+## Nota sobre los datos
+
+Los datos utilizados por la API corresponden a incidentes de tránsito de dominio público, obtenidos de fuentes periodísticas y registros abiertos.
+Los ejemplos incluidos en la documentación son ilustrativos y no representan información personal sensible ni identifican a personas físicas.
+Fuente: https://elrosalenio.com.ar/
