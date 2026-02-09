@@ -15,25 +15,52 @@ El proyecto se centra en la recolección y visualización de incidentes viales r
 - **Backend**: Node.js, Express, JavaScript
 - **Database**: MongoDB
 - **Security & Authentication**:
-  - JWT with Bearer token authentication (`jsonwebtoken`)
   - API KEY validation para la totalidad de las rutas de la API.
+  - JWT with Bearer token authentication (`jsonwebtoken`)
   - Password hashing (`crypto` / `bcrypt`)
-  - Protection against brute-force attacks (login attempts)
-  - Rate limiting per IP (`express-rate-limit`)
+  - Protección contra ataques brute-force (intentos de login)
+  - Rate limiting por IP (`express-rate-limit`)
   - Input sanitization (`express-mongo-sanitize`)
   - HTTP security headers (`helmet`)
 - **File Uploads**: `multer` for handling images and attachments
   - El tipo MIME del archivo es validado, así como su tamaño y peso.
 
+## Inicio
+
+- Se asume que se emplea la Base de datos (BDD) mongoDB actualmente desplegada en mongo Atlas.
+- No requiere que se la pueble.
+- Si se desea instalar la BDD en modo local se debe:
+- a. instalar mongoDB
+- b. poblar la base de datos con `npm run seed:all`
+
+## Instalación
+
+Pasos para la instalación:
+
+- `npm install`
+
+- crear el archivo `.env`, ajustando adecuadamente los valores. ver email.
+- existe un archivo de referencia: `.env.template`
+- JWT_SECRET en particular, debe ser extensa y aleatoria.
+- API_KEY del backend y VITE_API_KEY del frontend deben tener IDENTICO contenido.
+- MONGO_URI define la conexión a la base de datos en la nube. ver email.
+- La BDD en la nube no requiere acciones, está en servicio.
+- Si se desea BDD en modo local: Crear & poblar la base de datos: `npm run seed:all`
+- Ejecución en entorno de desarrollo: `npm run dev`
+- Ejecución en entorno de producción: `npm run start:prod`
+- Alternativa genérica. Ejecución en entorno de producción: `npm run start`
+
 ### Documentación interactiva con Swagger
 
 La API cuenta con documentación Swagger disponible en `/api/docs`:
 
-En modo local, en http://localhost:3000/api/docs
+- En render en https://geoincidentes-backend.onrender.com/api/docs/
+
+- En modo local, en http://localhost:3000/api/docs
 
 - Permite explorar todos los endpoints (GET, POST, PUT, DELETE) de manera interactiva.
 - Se puede probar la API directamente desde el navegador usando **Try it out**.
-- Para endpoints protegidos, incluye soporte de **API Key** y **JWT Bearer token**.
+- Para endpoints protegidos, incluye soporte de **API Key** y **JWT Bearer token**. ver email.
 - Respuestas documentadas: códigos 200/201 y errores 400, 401, 403, 404.
 - Pruebas en tiempo real: envía datos y recibe respuestas desde la interfaz.
 
@@ -41,14 +68,14 @@ En modo local, en http://localhost:3000/api/docs
 
 1. **Login**
    - Endpoint: `POST /api/auth/login`
-   - Proporcionar usuario y contraseña válidos (según email registrado).
+   - Proporcionar usuario y contraseña válidos. ver email.
    - Completar los campos requeridos y presionar **Execute**.
    - Swagger devuelve un **JWT token** que será usado en los endpoints protegidos.
 
 2. **Obtener incidentes**
    - Endpoint: `GET /api/incidentes`
    - Hacer click en **Try it out** en Swagger.
-   - Ingresar la **API Key** en el header `x-api-key`.
+   - Ingresar la **API Key** en el header `x-api-key`. ver email
    - Incluir el token JWT si el endpoint lo requiere.
    - Ejecutar y revisar la respuesta JSON con la lista de incidentes.
 
@@ -57,6 +84,7 @@ En modo local, en http://localhost:3000/api/docs
 El backend incluye un sistema de logger personalizado, diseñado para funcionar tanto en entornos de desarrollo como de producción.
 
 - Utilidad de logger centralizada (`src/utils/logger.js`)
+
 - Soporta distintos niveles de log:
   - `info`
   - `warn`
@@ -79,52 +107,50 @@ El sistema de logging se utiliza en toda la aplicación, incluyendo:
 - Reporte de errores
 - Mensajes de depuración y operación
 
-## Inicio
+## Coleccion en Postman para pruebas contra la API
 
-- Se asume que la Base de datos no existe o que sus colecciones están vacías.
+- Se encuentra en backend/postman/Incidentes.postman_collection.json
 
-## Instalación
-
-Pasos para la instalación:
-
-- `npm install`
-- crear el archivo `.env`, ajustando adecuadamente los valores
-- existe un archivo de referencia: `.env.template`
-- JWT_SECRET en particular, debe ser extensa y aleatoria.
-- API_KEY debe existir también en el frontend y ser de contenido IDENTICO en ambos servicios
-- Crear & poblar la base de datos: `npm run seed:all`
-- Ejecución en entorno de desarrollo: `npm run dev`
-- Ejecución en entorno de producción: `npm run start` para uso genérico
-- Ejecución en entorno de producción: `npm run start:prod`
+- Los endpoints que alteran la base de datos están omitidos en esta colección
+- Importar la coleccion
+- Crear un entorno
+- Crear las variables
+- Ejecutar la coleccion
+- variables de entorno: ver email
 
 ## Ingreso via Postman
 
 - Por criterios de evaluación, la API incorpora una API KEY en todas sus rutas.
+
 - Para probar la API en Postman, es necesario agregar `x-api-key` en el header. ver mail
 - el login permite, ademas, obtener el token. ver mail.
 - Para POST, PUT, DELETE en Postman, es necesario, ademas, ingresar el token logrado con el login.
-- En Postman y con los valores recibidos en el mail, acceder a:
-- POST http://localhost:3000/api/auth/login
-- Completar las variables Headers `Authorization: ver email` `x-api-key: ver email`
-- En Body raw, { `username: ver email` `password: ver email` }
+- En Postman y con los valores recibidos en el mail, acceder a: ver email.
+- Completar las variables Headers. ver mail.
+- En Body raw, completar variables del login. ver mail.
 
 ## Colecciones GET en Postman
 
 - Cumplido el login inicial via Postman, que ingresa la API KEY.
-- GET http://localhost:3000/api/incidentes
-- GET http://localhost:3000/api/incidentes?page=&limit=&keyword=
-- GET http://localhost:3000/api/incidentes/:id
-- GET http://localhost:3000/api/reports/incidentes/pdf
-- GET http://localhost:3000/api/reports/incidentes/xlsx
+- GET /api/incidentes
+- GET /api/incidentes?page=&limit=&keyword=
+- GET /api/incidentes/:id
+- GET /api/reports/incidentes/pdf
+- GET /api/reports/incidentes/xlsx
 
 ## Colecciones CRUD en Postman
 
+⚠️ Nota:
+Los endpoints que modifican datos se incluyen únicamente con fines demostrativos y requieren credenciales válidas.
+
+En la colección pública de Postman, estos endpoints se encuentran omitidos para evitar alteraciones accidentales de la base de datos.
+
 - Cumplido el login inicial via Postman, que ingresa la API KEY.
 - Completar la variable Header `Authorization:`, agregando el token obtenido en el login. ver email.
-- POST http://localhost:3000/api/auth/
-- POST http://localhost:3000/api/incidentes
-- PUT http://localhost:3000/api/incidentes
-- DELETE http://localhost:3000/api/incidentes/:id
+- POST /api/auth/
+- POST /api/incidentes
+- PUT /api/incidentes
+- DELETE /api/incidentes/:id
 
 ## Incidente collection
 
@@ -165,11 +191,11 @@ Para su uso en Postman POST, PUT, DELETE, el siguiente es el body raw necesario,
 
 - Ambos endpoints de reporte están protegidos mediante la API Key y permiten aplicar filtros por rango de fechas u otros criterios a través de la API.
 
-- Cumplido el login inicial via Postman, que ingresa la API KEY.
-- GET http://localhost:3000/api/reports/incidentes/pdf
-- GET http://localhost:3000/api/reports/incidentes/xlsx
-- GET http://localhost:3000/api/reports/incidentes/pdf?tipo=&medio=&desde=&hasta=&sector=&keyword=&fallecidos=&periodo=
-- GET http://localhost:3000/api/reports/incidentes/xlsx?tipo=&medio=&desde=&hasta=&sector=&keyword=&fallecidos=&periodo=
+- Cumplido el login inicial via Postman, en el servidor local o , que ingresa la API KEY.
+- GET /api/reports/incidentes/pdf
+- GET /api/reports/incidentes/xlsx
+- GET /api/reports/incidentes/pdf?tipo=&medio=&desde=&hasta=&sector=&keyword=&fallecidos=&periodo=
+- GET /api/reports/incidentes/xlsx?tipo=&medio=&desde=&hasta=&sector=&keyword=&fallecidos=&periodo=
 
 ## Testing
 
